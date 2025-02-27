@@ -3,7 +3,7 @@ import dbPromise from "./db";
 async function initDb() {
     const db = await dbPromise;
   
-    await db.exec(`
+    await db.run(`
       CREATE TABLE IF NOT EXISTS lojas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
@@ -19,5 +19,4 @@ async function initDb() {
     console.log("Database inicializada");
   }
   
-  initDb();
-  
+initDb();
