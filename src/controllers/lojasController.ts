@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import dbPromise from "../dbconfig/db";
+import { calcularLatLonDeCEP } from "../utils/geoUtils";
 
 export const adicionarLoja = async (req: Request, res: Response) => {
     const { nome, cep, numero } = req.body;
