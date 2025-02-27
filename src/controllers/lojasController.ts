@@ -7,11 +7,12 @@ export const adicionarLoja = async (req: Request, res: Response) => {
 
     try {
         // TODO: obter latitude e longitude do CEP, adicionar em const aqui e adicionar depois no db.run.
+        const { latitude, longitude } = await calcularLatLonDeCEP(cep);
 
         const db = await dbPromise;
         db.run(
-            "INSERT INTO lojas (nome, cep, numero) VALUES (?, ?, ?)",
-            [nome, cep, numero]
+            "INSERT INTO lojas (nome, cep, numero, latitude, longitude) VALUES (?, ?, ?, ?, ?)",
+            [nome, cep, numero, latitude, longitude]
         );
 
         res.status(201).send("loja adicionada com sucesso");
