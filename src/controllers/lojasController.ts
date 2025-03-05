@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import dbPromise from "../dbconfig/db";
 import { calcularLatLonDeCEP, distanciaHaversine, } from "../utils/geoUtils";
 import logger from "../config/logger";
+import axios from "axios";
 
 export const adicionarLoja = async (req: Request, res: Response) => {
     const { nome, cep, numero } = req.body;
@@ -9,10 +10,14 @@ export const adicionarLoja = async (req: Request, res: Response) => {
     try {
         const { latitude, longitude } = await calcularLatLonDeCEP(cep);
 
+        const viacepInfo = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+
+        const { estado, localidade, logradouro } = viacepInfo.data;
+
         const db = await dbPromise;
         db.run(
-            "INSERT INTO lojas (nome, cep, numero, latitude, longitude) VALUES (?, ?, ?, ?, ?)",
-            [nome, cep, numero, latitude, longitude]
+            "INSERT INTO lojas (nome, cep, estado, cidade, rua, numero, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            [nome, cep, estado, localidade, logradouro, numero, latitude, longitude]
         );
 
         logger.info(`Loja "${nome}" adicionada com sucesso.`);
@@ -55,8 +60,11 @@ export const buscarLojasProximas = async (req: Request, res: Response): Promise<
             return distanciaA - distanciaB;
         });
 
+        const retorno = lojasProximas.map((loja) => {
+            return { nome: loja.nome, estado: loja.estado, cidade: loja.cidade, rua: loja.rua, numero: loja.numero }
+        });
         logger.info(`Lojas próximas encontradas para o CEP ${cep}`);
-        res.status(200).json(lojasProximas);
+        res.status(200).json(retorno);
     } catch (error) {
         logger.error(`Erro ao buscar lojas proximas para o cep ${cep}: `, error);
         res.status(500).send("Erro ao buscar lojas proximas");
