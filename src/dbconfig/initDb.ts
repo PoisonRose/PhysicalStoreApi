@@ -8,6 +8,9 @@ async function initDb() {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
         cep TEXT NOT NULL UNIQUE,
+        estado TEXT NOT NULL,
+        cidade TEXT NOT NULL,
+        rua TEXT NOT NULL,
         numero TEXT NOT NULL,
         latitude REAL,
         longitude REAL
