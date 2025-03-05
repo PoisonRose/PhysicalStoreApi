@@ -1,5 +1,6 @@
 import express from "express";
 import lojasRouter from "./routes/lojaRoutes";
+import logger from "./config/logger";
 
 const app = express();
 app.use(express.json());
