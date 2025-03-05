@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import dbPromise from "../dbconfig/db";
 import { calcularLatLonDeCEP, distanciaHaversine, } from "../utils/geoUtils";
+import logger from "../config/logger";
 
 export const adicionarLoja = async (req: Request, res: Response) => {
     const { nome, cep, numero } = req.body;
@@ -14,9 +15,11 @@ export const adicionarLoja = async (req: Request, res: Response) => {
             [nome, cep, numero, latitude, longitude]
         );
 
+        logger.info(`Loja "${nome}" adicionada com sucesso.`);
+
         res.status(201).send("loja adicionada com sucesso");
     } catch (error) {
-        console.error("erro ao adicionar loja", error);
+        logger.error("erro ao adicionar loja", error);
         res.status(500).send("Erro ao adicionar loja");
     }
 };
@@ -25,6 +28,7 @@ export const buscarLojasProximas = async (req: Request, res: Response): Promise<
     const { cep } = req.params;
 
     if (!cep) {
+        logger.warn("CEP não fornecido na requisição");
         res.status(400).send("Por favor digite o CEP");
     }
 
@@ -40,6 +44,7 @@ export const buscarLojasProximas = async (req: Request, res: Response): Promise<
         });
 
         if (lojasProximas.length === 0) {
+            logger.warn(`Nenhuma loja encontrada para o CEP ${cep}`);
             res.status(404).send("Nenhuma loja encontrada em um raio de 100km.");
             return;
         }
@@ -50,9 +55,10 @@ export const buscarLojasProximas = async (req: Request, res: Response): Promise<
             return distanciaA - distanciaB;
         });
 
+        logger.info(`Lojas próximas encontradas para o CEP ${cep}`);
         res.status(200).json(lojasProximas);
     } catch (error) {
-        console.error("Erro ao buscar lojas proximas", error);
+        logger.error(`Erro ao buscar lojas proximas para o cep ${cep}: `, error);
         res.status(500).send("Erro ao buscar lojas proximas");
     }
 };
