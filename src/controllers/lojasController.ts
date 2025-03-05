@@ -24,7 +24,7 @@ export const adicionarLoja = async (req: Request, res: Response) => {
 
         res.status(201).send("loja adicionada com sucesso");
     } catch (error) {
-        logger.error("erro ao adicionar loja", error);
+        logger.error("erro ao adicionar loja: ", error);
         res.status(500).send("Erro ao adicionar loja");
     }
 };
