@@ -24,8 +24,10 @@ export const adicionarLoja = async (req: Request, res: Response) => {
 
         res.status(201).send("loja adicionada com sucesso");
     } catch (error) {
-        logger.error("erro ao adicionar loja: ", error);
-        res.status(500).send("Erro ao adicionar loja");
+        if (error instanceof Error){
+            logger.error(`erro ao adicionar loja: ${error.message}`);
+            res.status(500).send("Erro ao adicionar loja");
+        }
     }
 };
 
@@ -66,7 +68,9 @@ export const buscarLojasProximas = async (req: Request, res: Response): Promise<
         logger.info(`Lojas próximas encontradas para o CEP ${cep}`);
         res.status(200).json(retorno);
     } catch (error) {
-        logger.error(`Erro ao buscar lojas proximas para o cep ${cep}: `, error);
-        res.status(500).send("Erro ao buscar lojas proximas");
+        if (error instanceof Error){
+            logger.error(`Erro ao buscar lojas proximas para o cep ${cep}: ${error.message}`);
+            res.status(500).send("Erro ao buscar lojas proximas");
+        }
     }
 };
