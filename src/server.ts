@@ -14,5 +14,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORTA, () => {
-    console.log(`Servidor rodando. Porta: ${PORTA}`);
+    logger.info(`Servidor rodando. Porta: ${PORTA}`);
 });
